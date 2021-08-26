@@ -2,7 +2,8 @@ import mqtt from '../../utils/mqtt.min.js'
 const host = 'alis://ytlbe0.cn1.mqtt.chat'
 
 /**
- *
+ * 推荐使用真机调试、模拟器websocket连接不稳定
+ * 
  * appId、baseUrl、orgName、appName 需从console控制台获取
  *
  */
