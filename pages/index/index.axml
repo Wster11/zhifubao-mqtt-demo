@@ -1,0 +1,11 @@
+
+<view>
+  <button type="primary"  onTap="getToken">获取TOKEN</button> 
+  <button type="primary"  onTap="connect">连接服务</button> 
+  <button type="ghost"  onTap="subOne">订阅主题</button> 
+  <button type="ghost"  onTap="pubMsg">发布消息</button> 
+  <button type="ghost"  onTap="unSubscribe">取消订阅</button> 
+  <button type="warn"  onTap="close">关闭连接</button> 
+</view>
+
+
