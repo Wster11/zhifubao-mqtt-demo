@@ -10,12 +10,16 @@ const host = 'alis://ytlbe0.cn1.mqtt.chat'
 
 var deviceId = 'deviceId' // MQTT 用户自定义deviceID
 
-var appId = 'appid' // 从console控制台获取
+var appId = 'appId' // 从console控制台获取
 var appName = 'appName' // appName
 var orgName = 'orgName' // orgName
-var baseUrl = 'baseUrl' // token域名
+var baseUrl = 'baseUrl' // token域名 http://
 
-var grantType = 'password' // 获取token接口的参数
+var grantType = 'password' // 获取token接口的参数,不用改动
+
+var username = '' // IM用户名
+var password = '' // IM用户密码
+
 
 Page({
   data: {
@@ -28,8 +32,8 @@ Page({
       clean: true, //cleanSession不保持持久会话
       protocolVersion: 4, //MQTT连接协议版本
       clientId: deviceId + '@' + appId, // deviceID@AppID
-      password: 'token', // 用户token, 可以通过getToken方法获取,或者去console控制台获取对应的token
-      username: 'username', // IM用户名
+      password: '', // 用户token, 可以通过getToken方法获取,或者去console控制台获取对应的token
+      username: username, // IM用户名
       reconnectPeriod: 1000, //1000毫秒，两次重新连接之间的间隔 设置为0则关闭自动重链
       connectTimeout: 30 * 1000, //30 * 1000毫秒，两次重新连接之间的间隔
       resubscribe: true, //如果连接断开并重新连接，则会再次自动订阅已订阅的主题（默认true）
@@ -110,8 +114,6 @@ Page({
   },
   /**
    * 客户端获取token(password)代码示例如下：
-   * 请预先在 支付宝小程序管理中心 > 小程序详情 > 开发设置 > 开发设置 > 服务器域名白名单 中配置域名白名单
-   * https://opendocs.alipay.com/mini/api/owycmh
    */
   getToken: function () {
     let that = this
@@ -120,8 +122,8 @@ Page({
       method: 'POST',
       data: {
         grant_type: grantType,
-        username: 'username', // 用户名
-        password: 'password' // 用户登录密码
+        username: username, // 用户名
+        password: password // 用户登录密码
       },
       headers: {
         'content-type': 'application/json' //默认值
@@ -130,6 +132,9 @@ Page({
       success: function (res) {
         // 获取到的access_token
         console.log('Token：' + res.data.access_token)
+        
+        console.log(that.data.options)
+        that.data.options.password = res.data.access_token
         that.toast(res.data.access_token)
       },
       fail: function (res) {
