@@ -1,5 +1,5 @@
 import mqtt from '../../utils/mqtt.min.js'
-const host = 'alis://ytlbe0.cn1.mqtt.chat'
+const host = 'alis://xxxxxx' // xxxx 为连接地址需要在console后台 MQTT首页概览获取
 
 /**
  * 推荐使用真机调试、模拟器websocket连接不稳定
@@ -13,7 +13,7 @@ var deviceId = 'deviceId' // MQTT 用户自定义deviceID
 var appId = 'appId' // 从console控制台获取
 var appName = 'appName' // appName
 var orgName = 'orgName' // orgName
-var baseUrl = 'baseUrl' // token域名 http://
+var baseUrl = 'baseUrl' // token域名 https://
 
 var grantType = 'password' // 获取token接口的参数,不用改动
 
