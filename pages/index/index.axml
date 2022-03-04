@@ -1,6 +1,6 @@
 
 <view>
-  <button type="primary"  onTap="getToken">获取TOKEN</button> 
+  <button type="primary"  onTap="getAppToken">获取TOKEN</button> 
   <button type="primary"  onTap="connect">连接服务</button> 
   <button type="ghost"  onTap="subOne">订阅主题</button> 
   <button type="ghost"  onTap="pubMsg">发布消息</button> 

@@ -1,24 +1,22 @@
 import mqtt from '../../utils/mqtt.min.js'
-const host = 'alis://xxxxxx' // xxxx 为连接地址需要在console后台 MQTT首页概览获取
+const host = 'alis://xxx.xxx.xxx.xx' //环信MQTT服务器地址 通过console后台[MQTT]->[服务概览]->[服务配置]下[连接地址]获取
 
 /**
  * 推荐使用真机调试、模拟器websocket连接不稳定
- * 
- * appId、baseUrl、orgName、appName 需从console控制台获取
- *
  */
 
 var deviceId = 'deviceId' // MQTT 用户自定义deviceID
 
-var appId = 'appId' // 从console控制台获取
-var appName = 'appName' // appName
-var orgName = 'orgName' // orgName
-var baseUrl = 'baseUrl' // token域名 https://
+var appId = 'appId' // appID 通过console后台[MQTT]->[服务概览]->[服务配置]下[AppID]获取
 
-var grantType = 'password' // 获取token接口的参数,不用改动
+var restApiUrl = 'restApiUrl' // 环信MQTT REST API地址 通过console后台[MQTT]->[服务概览]->[服务配置]下[REST API地址]获取
 
-var username = '' // IM用户名
-var password = '' // IM用户密码
+var username = 'username' // 自定义用户名 长度不超过64位即可
+
+var appClientId = 'appClientId' // 开发者ID 通过console后台[应用概览]->[应用详情]->[开发者ID]下[ Client ID]获取
+
+var appClientSecret = 'appClientSecret' // 开发者密钥 通过console后台[应用概览]->[应用详情]->[开发者ID]下[ ClientSecret]获取
+
 
 
 Page({
@@ -28,12 +26,12 @@ Page({
     reconnectCounts: 0,
     //MQTT连接的配置
     options: {
-      keepalive: 60, //60s
-      clean: true, //cleanSession不保持持久会话
-      protocolVersion: 4, //MQTT连接协议版本
+      keepalive: 45, // 45s
+      clean: true, // cleanSession不保持持久会话
+      protocolVersion: 4, // MQTT连接协议版本
       clientId: deviceId + '@' + appId, // deviceID@AppID
-      password: '', // 用户token, 可以通过getToken方法获取,或者去console控制台获取对应的token
-      username: username, // IM用户名
+      password: '', // 用户token, 可以通过getAppToken方法获取,或者去console控制台获取对应的token
+      username: username, // 自定义用户名 长度不超过64位即可
       reconnectPeriod: 1000, //1000毫秒，两次重新连接之间的间隔 设置为0则关闭自动重链
       connectTimeout: 30 * 1000, //30 * 1000毫秒，两次重新连接之间的间隔
       resubscribe: true, //如果连接断开并重新连接，则会再次自动订阅已订阅的主题（默认true）
@@ -113,29 +111,55 @@ Page({
     }
   },
   /**
-   * 客户端获取token(password)代码示例如下：
+   * 客户端获取appToken代码示例如下：
    */
-  getToken: function () {
+  getAppToken: function () {
     let that = this
     my.request({
-      url: baseUrl + '/' + orgName + '/' + appName + '/token',
+      url: `${restApiUrl}/openapi/rm/app/token`,
       method: 'POST',
       data: {
-        grant_type: grantType,
-        username: username, // 用户名
-        password: password // 用户登录密码
+        appClientId: appClientId,
+        appClientSecret: appClientSecret,
       },
       headers: {
         'content-type': 'application/json' //默认值
       },
       dataType: 'json',
       success: function (res) {
-        // 获取到的access_token
-        console.log('Token：' + res.data.access_token)
-        
-        console.log(that.data.options)
-        that.data.options.password = res.data.access_token
-        that.toast(res.data.access_token)
+        // 获取到的appToken
+        let appToken = res.data.body.access_token
+        console.log('appToken', appToken)
+        that.getUserToken(appToken)
+      },
+      fail: function (res) {
+        my.alert({ content: 'fail' })
+      }
+    })
+  },
+  /**
+   * 客户端获取userToken(password)代码示例如下：
+   */
+  getUserToken: function (appToken) {
+    let that = this
+    my.request({
+      url: `${restApiUrl}/openapi/rm/user/token`,
+      method: 'POST',
+      data: {
+        appClientId: appClientId,
+        appClientSecret: appClientSecret,
+      },
+      headers: {
+        'Authorization': appToken,
+        'content-type': 'application/json' //默认值
+      },
+      dataType: 'json',
+      success: function (res) {
+        // 获取到的userToken
+        let userToken = res.data.body.access_token
+        console.log('userToken', userToken)
+        that.data.options.password = userToken
+        that.toast(userToken)
       },
       fail: function (res) {
         my.alert({ content: 'fail' })
